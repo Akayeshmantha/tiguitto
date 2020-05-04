@@ -10,8 +10,9 @@ T   I   G   UITTO
  |--(elegraf)
 ```
 
-Created for [Medium.com Post: Creating Your IoT Node and Edge Prototype with InfluxDB, Telegraf and Docker](https://medium.com/@shantanoodesai/creating-your-iot-node-and-edge-prototype-with-influxdb-telegraf-and-docker-b16380282672)
+## IoT Sensor Data
 
+Refer to [iotfablab/EPCIS-IoT-Arduino](https://github.com/iotfablab/EPCIS-IoT-Arduino) to publish information to the MQTT broker.
 
 ## Setup
 
@@ -38,39 +39,27 @@ Created for [Medium.com Post: Creating Your IoT Node and Edge Prototype with Inf
 
     ```toml
         [[inputs.mqtt_consumer]]
-            topics = [ "<YOUR TOPICS HERE>" ]
+            topics = [ "<Company>/#" ]
     ```
-5. (**Optional**) Additionally, change the regex and enum mappings to add more meta-data as tags in the InfluxDB or comment the sections out:
+5. Additionally, change the enum mappings to add EPC bizLocation meta-data as tags in the InfluxDB:
 
     ```toml
-
-        [[processors.regex]]
-
-        [[processors.regex.tags]]
-
-            # use the `topic` tag to extract information from the MQTT Topic
-            key = "topic"
-            # Topic: IOT/<SENSOR_ID>/<measurement>
-            # Extract <SENSOR_ID>
-            pattern = ".*/(.*)/.*"
-            # Replace the first occurrence
-            replacement = "${1}"
-            # Store it in tag called:
-            result_key = "sensorID"
-
         [[processors.enum]]
 
         [[processors.enum.mapping]]
 
         # create a mapping between extracted sensorID and some meta-data
-        tag = "sensorID"
-        dest = "location"
+        tag = "sID"
+        dest = "bizLocation"
 
         [processors.enum.mapping.value_mappings]
-            "sensor1" = "kitchen"
-            "sensor2" = "livingroom"
-
+            # <<<<< INSERT MAPPINGS HERE >>>>>>
+            # "MAC_ADDRESS" = "EPC_BizLocation"
+            "AA:11:22:33:DD:FF" = "urn:id:loc:sgln:COMPANY_1"
+            "AA:11:22:33:DE:11" = "urn:id:loc:sgln:COMPANY_2"
+            "AA:11:22:34:AC:FB" = "urn:id:loc:sgln:COMPANY_3"
     ```
+
 ## Bringing up the stack
 
 1. Bring the stack up using:
